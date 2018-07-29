@@ -1,0 +1,32 @@
+<component name="ArtifactManager">
+  <artifact type="javafx" name="Localization_Final">
+    <output-path>$PROJECT_DIR$/out/artifacts/Localization_Final</output-path>
+    <properties id="javafx-properties">
+      <options>
+        <option name="appClass" value="sample.Main" />
+        <option name="description" value="" />
+        <option name="htmlPlaceholderId" value="" />
+        <option name="title" value="" />
+        <option name="vendor" value="" />
+        <option name="version" value="" />
+      </options>
+    </properties>
+    <root id="root">
+      <element id="archive" name="AIISH_GUI_new.jar">
+        <element id="module-output" name="AIISH GUI new" />
+      </element>
+      <element id="file-copy" path="$USER_HOME$/Downloads/poi-bin-3.17-20170915/poi-3.17/lib/commons-collections4-4.1.jar" />
+      <element id="file-copy" path="$USER_HOME$/Downloads/Commons lang/commons-lang3-3.7/commons-lang3-3.7.jar" />
+      <element id="file-copy" path="$USER_HOME$/Downloads/poi-bin-3.17-20170915/poi-3.17/poi-3.17.jar" />
+      <element id="file-copy" path="$USER_HOME$/Downloads/poi-bin-3.17-20170915/poi-3.17/poi-excelant-3.17.jar" />
+      <element id="file-copy" path="$USER_HOME$/Downloads/poi-bin-3.17-20170915/poi-3.17/poi-ooxml-3.17.jar" />
+      <element id="file-copy" path="$USER_HOME$/Downloads/poi-bin-3.17-20170915/poi-3.17/poi-ooxml-schemas-3.17.jar" />
+      <element id="file-copy" path="$USER_HOME$/Downloads/poi-bin-3.17-20170915/poi-3.17/poi-scratchpad-3.17.jar" />
+      <element id="file-copy" path="$USER_HOME$/Downloads/poi-bin-3.17-20170915/poi-3.17/ooxml-lib/xmlbeans-2.6.0.jar" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/sample/top-view.jpg" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/sample/README.txt" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/sample/YOU CAN ALSO README.doc" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/sample/Instructions.doc" />
+    </root>
+  </artifact>
+</component>

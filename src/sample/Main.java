@@ -1,5 +1,6 @@
 package sample;
 
+
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
@@ -7,6 +8,8 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -20,6 +23,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,6 +52,40 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+
+        Button help = new Button("Help");
+        help.setLayoutX(0);
+        help.setLayoutY(0);
+        help.setFont(new Font(14));
+        pane.getChildren().add(help);
+
+        help.setOnAction(event -> {
+            File docFile = new File("Instructions.doc");
+            if (docFile.exists())
+            {
+                if (Desktop.isDesktopSupported())
+                {
+                    try
+                    {
+                        Desktop.getDesktop().open(docFile);
+                    }
+                    catch (IOException e)
+                    {
+
+                        e.printStackTrace();
+                    }
+                }
+                else
+                {
+                    System.out.println("Awt Desktop is not supported!");
+                }
+            }
+
+            else
+            {
+                System.out.println("File does not exist!");
+            }
+        });
 
         Button openFile = new Button("Open a file...");
         openFile.setLayoutX(width*0.05);
@@ -185,18 +223,45 @@ public class Main extends Application {
         Circle circle = new Circle();
         circle.setCenterX(width*0.65);
         circle.setCenterY(height*0.5);
-        circle.setRadius(height*0.45);
+        circle.setRadius(height*0.43);
         circle.setStroke(Color.BLACK);
         circle.setFill(Color.BEIGE);
 
+        Circle outCircle = new Circle();
+        outCircle.setCenterX(width*0.65);
+        outCircle.setCenterY(height*0.5);
+        outCircle.setRadius(height*0.48);
+        outCircle.setStroke(Color.TRANSPARENT);
+        outCircle.setFill(Color.TRANSPARENT);
+
+
+        try{
+            Image image = new Image(new FileInputStream("top-view.jpg"));
+            ImageView imageView = new ImageView(image);
+
+            imageView.setX(width*0.65-100);
+            imageView.setY(height*0.5-100);
+
+            imageView.setPreserveRatio(true);
+            pane.getChildren().addAll(circle,outCircle);
+
+            pane.getChildren().add(imageView);
+        }
+        catch (FileNotFoundException e){
+            System.out.println("Exceptional");
+            pane.getChildren().addAll(circle,outCircle);
+
+        }
+
+
         //-----------------------------------CIRCLE BUTTONS------------------------------------------
 
-        pane.getChildren().addAll(circle);
-        generateButtons(circle.getRadius(),circle.getCenterX(),circle.getCenterY());
+
+        generateButtons(circle.getRadius(),outCircle.getRadius(),circle.getCenterX(),circle.getCenterY());
 
     }
 
-    private void generateButtons(double r, double x, double y) {
+    private void generateButtons(double r,double rad, double x, double y) {
         double targetx, targety;
         int i = 0;
         for (double sel : uniqInfo) {
@@ -213,6 +278,23 @@ public class Main extends Application {
             btn.setOnAction(this::handleButtonAction);
             pane.getChildren().add(btn);
             i++;
+        }
+
+        for (int angle = 0;angle<360;angle += 45){
+            int ang;
+            if (0 <= angle && angle < 90) {
+                ang = 270 + angle;
+            } else {
+                ang = angle - 90;
+            }
+            targetx = rad * (Math.cos(Math.PI * ang / 180));
+            targety = rad * (Math.sin(Math.PI * ang / 180));
+            Label label = new Label(Integer.toString(angle) +"º");
+            label.setLayoutX(x + targetx);
+            label.setLayoutY(y + targety);
+            label.setFont(new Font(16));
+            pane.getChildren().add(label);
+
         }
     }
     //-----------------------------------CIRCLE BUTTONS END--------------------------------------
@@ -325,28 +407,39 @@ public class Main extends Application {
     private void writed() {
         XSSFWorkbook workbook = new XSSFWorkbook();
         try{workbook = new XSSFWorkbook(new FileInputStream(new File(url)));}
-        catch(Exception e)
-        {
+        catch(Exception e) {
             System.out.println("Exceptional");
 
         }
-
         XSSFSheet sheet = workbook.getSheetAt(0);
         Row row;
 
         int i=0;
-        row = sheet.createRow(tries+4);
+        row = sheet.createRow(tries+8);
         Cell res = row.createCell(3);
         res.setCellValue("DOE=");
         Cell ult = row.createCell(4);
         ult.setCellValue(r);
+        Cell c,c1;
+        try{
+            row = sheet.getRow(1);
+            c = row.createCell(5);
+        }catch (NullPointerException e){
+            row = sheet.createRow(1);
+            c = row.createCell(5);
+        }
 
-        row = sheet.getRow(1);
-        Cell c = row.createCell(5);
         c.setCellValue("DOE PER  SPEAKER");
 
-        row = sheet.getRow(2);
-        Cell c1 = row.createCell(5);
+        try{
+            row = sheet.getRow(2);
+            c1 = row.createCell(5);
+        }
+        catch (NullPointerException e){
+            row = sheet.createRow(2);
+            c1 = row.createCell(5);
+        }
+
         c1.setCellValue("Speaker No.");
 
         Cell c2 = row.createCell(6);
@@ -354,26 +447,52 @@ public class Main extends Application {
         for(int rowIndex =1;rowIndex<=tries;rowIndex++)
         {
             //------Response---------
-            row = sheet.getRow(rowIndex);
-            org.apache.poi.ss.usermodel.Cell cell=row.createCell(2);
+            org.apache.poi.ss.usermodel.Cell cell;
+            try{
+                row = sheet.getRow(rowIndex);
+                cell=row.createCell(2);
+            }catch (NullPointerException e){
+                row = sheet.createRow(rowIndex);
+                cell=row.createCell(2);
+            }
+
             cell.setCellValue(valArr.get(i));
             //--------- R END--------
             //-----DOE PER SPEAKER-------
-            row = sheet.getRow(rowIndex+2);
-            if(i<uniqsNumbers.size()) {
-                Cell cell1 = row.createCell(5);
-                cell1.setCellValue(uniqsNumbers.get(i));
-            }
-            if (i<dps.size()){
-                Cell cell2 = row.createCell(6);
-                cell2.setCellValue(dps.get(i));
+            try {
+                row = sheet.getRow(rowIndex + 2);
+                if (i < uniqsNumbers.size()) {
+                    Cell cell1 = row.createCell(5);
+                    cell1.setCellValue(uniqsNumbers.get(i));
+                }
+                if (i < dps.size()) {
+                    Cell cell2 = row.createCell(6);
+                    cell2.setCellValue(dps.get(i));
+                }
+            }catch (NullPointerException e){
+                row = sheet.createRow(rowIndex + 2);
+                if (i < uniqsNumbers.size()) {
+                    Cell cell1 = row.createCell(5);
+                    cell1.setCellValue(uniqsNumbers.get(i));
+                }
+                if (i < dps.size()) {
+                    Cell cell2 = row.createCell(6);
+                    cell2.setCellValue(dps.get(i));
+                }
             }
             //--------DPS END ------------
             i++;
         }
+        Cell cx;
+        try{
+            row = sheet.getRow(uniqsNumbers.size()+3);
+            cx = row.createCell(5);
+        }
+        catch (NullPointerException e){
+            row = sheet.createRow(uniqsNumbers.size()+3);
+            cx = row.createCell(5);
+        }
 
-        row = sheet.getRow(uniqsNumbers.size()+3);
-        Cell cx = row.createCell(5);
         cx.setCellValue("AVG. DOE=");
 
         cx = row.createCell(6);
@@ -395,6 +514,7 @@ public class Main extends Application {
             e.printStackTrace();
         }
     }
+
 //-------------------------------------FUNCTION DEFN ENDS-----------------------------------------
 
 }
