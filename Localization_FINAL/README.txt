@@ -43,6 +43,8 @@ To run the test
 3)	Use the buttons to take inputs from the patients
 4)	Click on calculate to generate the DOE per speaker and over all DOE. This result will also be written into your Excel File.
 
+To run test again for same Stimuli,
+	Click on CLEAR DATA, And then start taking response.
  
 NOTE : If you want to run the test again then clear output (response, DOE/speaker/ Average DOE), that is other than what was given before running the program. 
 
